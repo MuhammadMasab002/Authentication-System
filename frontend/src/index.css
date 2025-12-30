@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #021028;
+
+  --primary: #23a3ff;
+  --primary-light: #cbeaff;
+  --primary-dark: #004ebf;
+  --primary-lighter: #edf4ff;
+  --primary-variant-1: #9144ff;
+  --primary-variant-2: #53209c;
+
+  --secondary: #ff7228;
+  --secondary-light: #ffede3;
+  --secondary-lighter: #fff7f3;
+  --secondary-variant-1: #fc454b;
+  --secondary-warning: #eab308;
+
+  --gray-light: #e5e7eb;
+  --gray-lighter: #ebecec;
+  --gray-medium: #a9a9a9;
+  --gray-dark: #77808a;
+  --gray-darker: #36393f;
+
+  --footer-primary: #020f26;
+
+  --success: #0fdd1d;
+  --success-light: #c9f9ce;
+  --success-dark: #065e0c;
+
+  --failure: #e90707;
+  --failure-dark: #9b0303;
+}
+
+.dark {
+  --bg: #1c1c1c;
+  --text: #f5f5f5;
+}
+
+/* in index.css */
+@layer utilities {
+  .text-background { color: var(--background); }
+  .text-foreground { color: var(--foreground); }
+
+  .text-primary { color: var(--primary); }
+  .text-secondary { color: var(--secondary); }
+  .text-success { color: var(--success); }
+
+  .bg-background { background-color: var(--background); }
+  .bg-foreground { background-color: var(--foreground); }
+
+  .bg-primary { background-color: var(--primary); }
+  .bg-secondary { background-color: var(--secondary); }
+}
