@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import CustomFormInput, { INPUT_TYPES } from "../common/inputs/CustomFormInput";
-
-import SearchIcon from "@mui/icons-material/Search";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import MenuIcon from "@mui/icons-material/Menu";
 
