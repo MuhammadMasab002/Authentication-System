@@ -6,6 +6,7 @@ export const BUTTON_VARIANTS = {
   SECONDARY: "secondary",
   OUTLINE: "outline",
   TEXT_PRIMARY: "text-primary",
+  TEXT_SECONDARY: "text-secondary",
   TEXT_DANGER: "text-danger",
   DANGER: "danger",
   SUCCESS: "success",
@@ -59,15 +60,20 @@ const CustomButton = ({
   const variantStyles = {
     [BUTTON_VARIANTS.PRIMARY]:
       "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 focus:ring-blue-500 disabled:bg-blue-300",
-
     [BUTTON_VARIANTS.SECONDARY]:
-      "bg-gray-200 text-gray-800 hover:bg-gray-300 active:bg-gray-400 focus:ring-gray-400 disabled:bg-gray-100",
+      "bg-yellow-600 text-white hover:bg-yellow-700 active:bg-yellow-800 focus:ring-yellow-500 disabled:bg-yellow-300",
+
+    // [BUTTON_VARIANTS.SECONDARY]:
+    //   "bg-orange-200 text-orange-600 hover:bg-orange-300 active:bg-orange-400 focus:ring-orange-400 disabled:bg-orange-100",
 
     [BUTTON_VARIANTS.OUTLINE]:
       "border border-gray-400 text-gray-700 hover:bg-gray-100 active:bg-gray-200 focus:ring-gray-400 disabled:opacity-50",
 
     [BUTTON_VARIANTS.TEXT_PRIMARY]:
       "bg-transparent text-blue-600 hover:underline focus:ring-blue-400 disabled:text-blue-300",
+
+    [BUTTON_VARIANTS.TEXT_SECONDARY]:
+      "bg-transparent text-yellow-600 hover:underline focus:ring-yellow-400 disabled:text-yellow-300",
 
     [BUTTON_VARIANTS.DANGER]:
       "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus:ring-red-500 disabled:bg-red-300",

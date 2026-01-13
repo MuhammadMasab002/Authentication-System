@@ -77,7 +77,7 @@ const CustomFormInput = ({
   /* ================= VARIANT ================= */
   const variantStyles = {
     [INPUT_VARIANTS.DEFAULT]:
-      "border-gray-300 focus-within:border-blue-500 focus-within:ring-blue-400",
+      "border-gray-300 focus-within:border-yellow-500 focus-within:ring-yellow-400",
 
     [INPUT_VARIANTS.ERROR]:
       "border-red-500 focus-within:border-red-500 focus-within:ring-red-400",

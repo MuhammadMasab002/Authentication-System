@@ -38,9 +38,9 @@ const Header = () => {
               {/* Logo */}
               <Link
                 to="/"
-                className="text-xl font-bold text-gray-900 hover:text-primary transition"
+                className="text-xl font-bold text-gray-900 hover:text-yellow-500 transition"
               >
-                auth<span className="text-primary">.</span>
+                auth<span className="text-yellow-500">.</span>
               </Link>
             </div>
 
@@ -55,8 +55,8 @@ const Header = () => {
                     `text-sm font-medium transition
                     ${
                       isActive
-                        ? "text-primary"
-                        : "text-gray-700 hover:text-primary"
+                        ? "text-yellow-500"
+                        : "text-gray-700 hover:text-yellow-500"
                     }`
                   }
                 >
@@ -70,7 +70,7 @@ const Header = () => {
               {/* Profile */}
               <Link
                 to="/my-profile"
-                className="p-2 rounded-full bg-gray-100 hover:bg-primary/10"
+                className="p-2 rounded-full bg-gray-100 hover:bg-yellow-500/10"
               >
                 <PersonOutlineIcon />
               </Link>

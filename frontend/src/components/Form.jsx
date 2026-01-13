@@ -10,7 +10,7 @@ const Form = ({ formData, onSubmit, errors, onChange }) => {
     <div className="w-full grid grid-cols-1">
       <div className="flex items-center justify-center py-10 px-6">
         <div className="w-full max-w-md">
-          <h2 className="text-4xl font-bold text-left text-primary mb-8">
+          <h2 className="text-4xl font-bold text-left text-yellow-500 mb-8">
             Create an User
           </h2>
           <p className="text-left text-black mb-6">Enter your details below</p>
@@ -52,7 +52,7 @@ const Form = ({ formData, onSubmit, errors, onChange }) => {
             <CustomButton
               text="Create User"
               type="submit"
-              variant={BUTTON_VARIANTS.PRIMARY}
+              variant={BUTTON_VARIANTS.SECONDARY}
               className="cursor-pointer"
             />
             {/* if already have account */}
@@ -64,7 +64,7 @@ const Form = ({ formData, onSubmit, errors, onChange }) => {
                 text="Sign in"
                 type="button"
                 size={BUTTON_SIZES.SM}
-                variant={BUTTON_VARIANTS.TEXT_PRIMARY}
+                variant={BUTTON_VARIANTS.TEXT_SECONDARY}
                 className="px-0! py-0! max-w-14 cursor-pointer"
                 onClick={
                   () => (window.location.href = "/signin") // Redirect to login page
