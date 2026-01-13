@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import CustomFormInput, { INPUT_TYPES } from "../components/common/inputs/CustomFormInput";
+import CustomFormInput, {
+  INPUT_TYPES,
+} from "../components/common/inputs/CustomFormInput";
 import CustomButton, {
   BUTTON_SIZES,
   BUTTON_VARIANTS,
 } from "../components/common/buttons/CustomButton";
 
-const SignUp = () => {
+const SignIn = () => {
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState({
-    name: "",
     email: "",
     password: "",
   });
@@ -33,15 +33,8 @@ const SignUp = () => {
   };
 
   const validate = () => {
-    const { name, email, password } = formData;
+    const { email, password } = formData;
     const newErrors = {};
-
-    // Name validation
-    if (!name.trim()) {
-      newErrors.name = "Name is required";
-    } else if (name.length < 3) {
-      newErrors.name = "Name must be at least 3 characters";
-    }
 
     // Email validation
     if (!email.trim()) {
@@ -77,12 +70,10 @@ const SignUp = () => {
 
     // Reset form
     setFormData({
-      name: "",
       email: "",
       password: "",
     });
     setErrors({
-      name: "",
       email: "",
       password: "",
     });
@@ -94,7 +85,7 @@ const SignUp = () => {
         <div className="flex items-center justify-center py-10 px-6">
           <div className="w-full max-w-md">
             <h2 className="text-4xl font-bold text-left text-yellow-500 mb-8">
-              Create an User
+              Sign In
             </h2>
             <p className="text-left text-black mb-6">
               Enter your details below
@@ -105,17 +96,6 @@ const SignUp = () => {
               onSubmit={handleSubmit}
               className="flex flex-col gap-5 text-black"
             >
-              <CustomFormInput
-                placeholder="Name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                type={INPUT_TYPES.TEXT}
-                variant={errors.name ? "error" : "default"}
-                errorMessage={errors.name}
-              />
-
               <CustomFormInput
                 placeholder="Email or Phone Number"
                 name="email"
@@ -138,7 +118,7 @@ const SignUp = () => {
                 errorMessage={errors.password}
               />
               <CustomButton
-                text="Create User"
+                text="Sign In"
                 type="submit"
                 variant={BUTTON_VARIANTS.SECONDARY}
                 className="cursor-pointer"
@@ -146,16 +126,16 @@ const SignUp = () => {
               {/* if already have account */}
               <div className="flex justify-center flex-col items-center gap-2">
                 <p className="text-sm text-center text-gray-600 mt-4 mb-0!">
-                  Already have an account?{" "}
+                  Don't have an account?{" "}
                 </p>
                 <CustomButton
-                  text="Sign in"
+                  text="Sign up"
                   type="button"
                   size={BUTTON_SIZES.SM}
                   variant={BUTTON_VARIANTS.TEXT_SECONDARY}
                   className="px-0! py-0! max-w-14 cursor-pointer"
                   onClick={
-                    () => (window.location.href = "/signin") // Redirect to login page
+                    () => (window.location.href = "/signup") // Redirect to signup page
                   }
                 />
               </div>
@@ -167,4 +147,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;

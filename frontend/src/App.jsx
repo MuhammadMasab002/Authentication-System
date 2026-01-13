@@ -1,7 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import MainLayout from "./layouts/MainLayout";
-import Signup from "./pages/Signup";
+import SignUp from "./pages/Signup";
+import SignIn from "./pages/SignIn";
 
 function App() {
   return (
@@ -9,11 +10,8 @@ function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route
-            path="/signin"
-            element={<div className="text-center">Signin Page</div>}
-          />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signin" element={<SignIn />} />
           <Route
             path="/my-profile"
             element={<div className="text-center">Profile Page</div>}

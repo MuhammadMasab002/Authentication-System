@@ -28,7 +28,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between px-4 h-16 border-b">
           <h2 className="text-lg font-bold">
-            auth<span className="text-primary">.</span>
+            auth<span className="text-yellow-500">.</span>
           </h2>
           <button
             onClick={onClose}
@@ -49,7 +49,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 `px-4 py-3 rounded-lg text-sm font-medium transition
                 ${
                   isActive
-                    ? "bg-primary/10 text-primary"
+                    ? "bg-yellow-500/10 text-yellow-500"
                     : "text-gray-700 hover:bg-gray-100"
                 }`
               }
