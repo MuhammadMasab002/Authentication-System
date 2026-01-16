@@ -1,6 +1,7 @@
 import { User } from "../models/auth.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import transporter from "../utils/nodemailer.js";
 
 const registerUser = async (req, res) => {
   // Registration logic here
@@ -39,7 +40,16 @@ const registerUser = async (req, res) => {
       expiresIn: "7d",
     });
 
-    res
+    // sending welcome email logic
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: newUser.email,
+      subject: "Welcome to Our Service",
+      text: `Welcome to Our Website. Your account has been created successfully with email ID: ${newUser.email}`,
+    };
+    await transporter.sendMail(mailOptions);
+
+    return res
       .status(201)
       .cookie("token", token, {
         httpOnly: true,
@@ -52,7 +62,7 @@ const registerUser = async (req, res) => {
         message: "User registered successfully",
       });
   } catch (error) {
-    res
+    return res
       .status(500)
       .send({ success: false, message: "Server Error: " + error.message });
   }
@@ -86,7 +96,7 @@ const loginUser = async (req, res) => {
       expiresIn: "7d",
     });
 
-    res
+    return res
       .status(200)
       .cookie("token", token, {
         httpOnly: true,
@@ -99,7 +109,7 @@ const loginUser = async (req, res) => {
         message: "User logged in successfully",
       });
   } catch (error) {
-    res
+    return res
       .status(500)
       .send({ success: false, message: "Server Error: " + error.message });
   }
@@ -107,7 +117,7 @@ const loginUser = async (req, res) => {
 
 const logoutUser = (req, res) => {
   try {
-    res
+    return res
       .status(200)
       .clearCookie("token", {
         httpOnly: true,
@@ -116,7 +126,7 @@ const logoutUser = (req, res) => {
       })
       .send({ success: true, message: "User logged out successfully" });
   } catch (error) {
-    res
+    return res
       .status(500)
       .send({ success: false, message: "Server Error: " + error.message });
   }
