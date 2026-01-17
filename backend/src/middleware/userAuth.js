@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/auth.model.js";
 
 const authenticateUser = async (req, res, next) => {
-  const token =
-    req.header("Authorization")?.replace("Bearer ", "") || req.cookies.token;
+  const { token } = req.cookies;
+  //  || req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
     return res
