@@ -132,4 +132,110 @@ const logoutUser = (req, res) => {
   }
 };
 
-export { registerUser, loginUser, logoutUser };
+// Send verification otp email to verify the account
+const sendVerificationOtp = async (req, res) => {
+  const { user } = req.body;
+
+  try {
+    const userFromDb = await User.findById(user?._id);
+    if (!userFromDb) {
+      return res.status(404).send({
+        success: false,
+        message: "User with this email does not exist",
+      });
+    }
+
+    if (userFromDb.isAccountVerified) {
+      return res.status(400).send({
+        success: false,
+        message: "Account is already verified",
+      });
+    }
+
+    // generate OTP and expiry time
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpireAt = Date.now() + 10 * 60 * 1000; // 10 minutes from now
+
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: userFromDb.email,
+      subject: "Account Verification OTP",
+      text: `Your account verification OTP is: ${otp}. It will expire in 10 minutes.`,
+    };
+    await transporter.sendMail(mailOptions);
+
+    userFromDb.verifyOtp = otp;
+    userFromDb.verifyOtpExpireAt = otpExpireAt;
+    await userFromDb.save();
+
+    return res.status(200).send({
+      success: true,
+      message: "Verification OTP sent on Email",
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ success: false, message: "Server Error: " + error.message });
+  }
+};
+
+// verify email otp
+const verifyEmail = async (req, res) => {
+  const { user, otp } = req.body;
+
+  if (!user || !otp) {
+    return res
+      .status(400)
+      .send({ success: false, message: "Missing required details" });
+  }
+
+  try {
+    const userFromDb = await User.findById(user?._id);
+    if (!userFromDb) {
+      return res.status(404).send({
+        success: false,
+        message: "User with this email does not exist",
+      });
+    }
+    // if (user.isAccountVerified) {
+    //   return res.status(400).send({
+    //     success: false,
+    //     message: "Account is already verified",
+    //   });
+    // }
+    if (userFromDb.verifyOtp === "" && userFromDb.verifyOtp !== otp) {
+      return res.status(400).send({
+        success: false,
+        message: "Invalid OTP",
+      });
+    }
+    if (Date.now() > userFromDb.verifyOtpExpireAt) {
+      return res.status(400).send({
+        success: false,
+        message: "OTP has expired",
+      });
+    }
+
+    userFromDb.isAccountVerified = true;
+    userFromDb.verifyOtp = "";
+    userFromDb.verifyOtpExpireAt = 0;
+    await userFromDb.save();
+
+    return res.status(200).send({
+      success: true,
+      message: "Email verified successfully",
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .send({ success: false, message: "Server Error: " + error.message });
+  }
+};
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  sendVerificationOtp,
+  verifyEmail,
+};
