@@ -6,6 +6,7 @@ import transporter from "../utils/nodemailer.js";
 const registerUser = async (req, res) => {
   // Registration logic here
   const { username, email, password } = req.body;
+
   if (!username || !email || !password) {
     return res
       .status(400)
@@ -71,6 +72,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   // Login logic here
   const { email, password } = req.body;
+
   if (!email || !password) {
     return res
       .status(400)
@@ -134,14 +136,21 @@ const logoutUser = (req, res) => {
 
 // Send verification otp email to verify the account
 const sendVerificationOtp = async (req, res) => {
-  const { user } = req.body;
+  const user = req.user;
+
+  if (!user || !user._id) {
+    return res.status(400).send({
+      success: false,
+      message: "User not authenticated",
+    });
+  }
 
   try {
-    const userFromDb = await User.findById(user?._id);
+    const userFromDb = await User.findById(user._id);
     if (!userFromDb) {
       return res.status(404).send({
         success: false,
-        message: "User with this email does not exist",
+        message: "User not found",
       });
     }
 
@@ -162,8 +171,18 @@ const sendVerificationOtp = async (req, res) => {
       subject: "Account Verification OTP",
       text: `Your account verification OTP is: ${otp}. It will expire in 10 minutes.`,
     };
-    await transporter.sendMail(mailOptions);
 
+    // Send email FIRST, only save OTP if email succeeds
+    try {
+      await transporter.sendMail(mailOptions);
+    } catch (emailError) {
+      return res.status(500).send({
+        success: false,
+        message: "Failed to send OTP email. Please try again later.",
+      });
+    }
+
+    // Only save OTP after email is successfully sent
     userFromDb.verifyOtp = otp;
     userFromDb.verifyOtpExpireAt = otpExpireAt;
     await userFromDb.save();
@@ -173,6 +192,7 @@ const sendVerificationOtp = async (req, res) => {
       message: "Verification OTP sent on Email",
     });
   } catch (error) {
+    console.error("SendVerificationOtp Error:", error);
     return res
       .status(500)
       .send({ success: false, message: "Server Error: " + error.message });
@@ -181,41 +201,60 @@ const sendVerificationOtp = async (req, res) => {
 
 // verify email otp
 const verifyEmail = async (req, res) => {
-  const { user, otp } = req.body;
+  const { otp } = req.body;
+  const user = req.user;
 
-  if (!user || !otp) {
-    return res
-      .status(400)
-      .send({ success: false, message: "Missing required details" });
+  if (!user || !user._id) {
+    return res.status(400).send({
+      success: false,
+      message: "User not authenticated",
+    });
+  }
+
+  if (!otp || typeof otp !== "string") {
+    return res.status(400).send({
+      success: false,
+      message: "Invalid OTP format",
+    });
   }
 
   try {
-    const userFromDb = await User.findById(user?._id);
+    const userFromDb = await User.findById(user._id);
     if (!userFromDb) {
       return res.status(404).send({
         success: false,
-        message: "User with this email does not exist",
+        message: "User not found",
       });
     }
-    // if (user.isAccountVerified) {
-    //   return res.status(400).send({
-    //     success: false,
-    //     message: "Account is already verified",
-    //   });
-    // }
-    if (userFromDb.verifyOtp === "" && userFromDb.verifyOtp !== otp) {
+
+    if (userFromDb.isAccountVerified) {
+      return res.status(400).send({
+        success: false,
+        message: "Account is already verified",
+      });
+    }
+
+    // Check if OTP exists and matches (FIXED LOGIC)
+    if (userFromDb.verifyOtp === "" || userFromDb.verifyOtp !== otp) {
       return res.status(400).send({
         success: false,
         message: "Invalid OTP",
       });
     }
+
+    // Check if OTP has expired
     if (Date.now() > userFromDb.verifyOtpExpireAt) {
+      userFromDb.verifyOtp = "";
+      userFromDb.verifyOtpExpireAt = 0;
+      await userFromDb.save();
+
       return res.status(400).send({
         success: false,
-        message: "OTP has expired",
+        message: "OTP has expired. Please request a new one.",
       });
     }
 
+    // Mark account as verified and clear OTP
     userFromDb.isAccountVerified = true;
     userFromDb.verifyOtp = "";
     userFromDb.verifyOtpExpireAt = 0;
@@ -226,6 +265,7 @@ const verifyEmail = async (req, res) => {
       message: "Email verified successfully",
     });
   } catch (error) {
+    console.error("VerifyEmail Error:", error);
     return res
       .status(500)
       .send({ success: false, message: "Server Error: " + error.message });

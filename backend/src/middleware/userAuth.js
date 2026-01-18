@@ -2,14 +2,16 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/auth.model.js";
 
 const authenticateUser = async (req, res, next) => {
-  const { token } = req.cookies;
-  //  || req.header("Authorization")?.replace("Bearer ", "");
+  const tokenFromCookie = req.cookies?.token;
+  const tokenFromHeader = req.header("Authorization")?.replace("Bearer ", "");
+  const token = tokenFromCookie || tokenFromHeader;
 
   if (!token) {
     return res
       .status(401)
       .send({ success: false, message: "Access denied. No token provided." });
   }
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId);
@@ -19,7 +21,9 @@ const authenticateUser = async (req, res, next) => {
         .status(401)
         .send({ success: false, message: "Invalid token." });
     }
-    req.body.user = user;
+
+    // Attach the hydrated user doc to the request for downstream handlers
+    req.user = user;
     next();
   } catch (error) {
     return res
