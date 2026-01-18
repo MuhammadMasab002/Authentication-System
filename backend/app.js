@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRouter from "./src/routes/auth.routes.js";
+import userRouter from "./src/routes/user.routers.js";
 
 const app = express();
 
@@ -27,5 +28,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
 
 export default app;
