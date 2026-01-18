@@ -312,7 +312,7 @@ const sendPasswordResetOtp = async (req, res) => {
       text: `Your password reset OTP is: ${otp}. It will expire in 10 minutes.`,
     };
     // send email
-    const emailSent = await sendEmail(mailOptions);
+    const emailSent = await transporter.sendMail(mailOptions);
     if (!emailSent) {
       return res.status(500).send({
         success: false,
@@ -374,7 +374,7 @@ const resetPassword = async (req, res) => {
     user.password = hashedPassword;
     user.resetOtp = "";
     user.resetOtpExpireAt = 0;
-    
+
     await user.save();
 
     return res.status(200).send({
