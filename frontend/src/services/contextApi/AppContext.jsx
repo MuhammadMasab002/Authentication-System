@@ -9,7 +9,7 @@ export const AppContextProvider = ({ children }) => {
     import.meta.env.VITE_API_REMOTE_URL ||
     import.meta.env.VITE_API_URL ||
     "http://localhost:5000/api";
-    
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
 
@@ -20,7 +20,7 @@ export const AppContextProvider = ({ children }) => {
       });
       if (response.data.success) {
         setIsLoggedIn(true);
-        getUserData();
+        await getUserData();
       } else {
         setIsLoggedIn(false);
       }
@@ -47,7 +47,19 @@ export const AppContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    getAuthState();
+    let isMounted = true;
+
+    const initAuth = async () => {
+      if (isMounted) {
+        await getAuthState();
+      }
+    };
+
+    initAuth();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const value = {

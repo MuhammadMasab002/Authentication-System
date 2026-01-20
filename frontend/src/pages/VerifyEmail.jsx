@@ -4,12 +4,13 @@ import CustomButton, {
   BUTTON_VARIANTS,
 } from "../components/common/buttons/CustomButton";
 import { AppContext } from "../services/contextApi/AppContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useRouteLoaderData } from "react-router-dom";
 
 const VerifyEmail = () => {
   const navigate = useNavigate();
 
-  const { backendUrl, userData, setUserData } = useContext(AppContext);
+  const { backendUrl, isLoggedIn, userData, getUserData } =
+    useContext(AppContext);
 
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
   const [status, setStatus] = useState("");
@@ -107,7 +108,7 @@ const VerifyEmail = () => {
         setStatus("Email verified successfully.");
         navigate("/");
         alert("Email verified successfully.");
-        if (userData) setUserData({ ...userData, isAccountVerified: true });
+        await getUserData();
       } else {
         setStatus(res.data?.message || "Verification failed.");
         alert(res.data?.message || "Verification failed.");
@@ -119,6 +120,11 @@ const VerifyEmail = () => {
       setLoadingVerify(false);
     }
   };
+
+  //   redirect to home if already logged in and verified
+  useEffect(() => {
+    isLoggedIn && userData && userData?.isAccountVerified && navigate("/");
+  }, [isLoggedIn, userData, navigate]);
 
   return (
     <div className="w-full min-h-[80vh] flex flex-col justify-center items-center gap-6 bg-gray-50">
