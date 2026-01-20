@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import MainLayout from "./layouts/MainLayout";
 import SignIn from "./pages/Signin";
 import SignUp from "./pages/Signup";
+import VerifyEmail from "./pages/VerifyEmail";
 
 function App() {
   return (
@@ -24,10 +25,7 @@ function App() {
             path="/contact"
             element={<div className="text-center">Contact Page</div>}
           />
-          <Route
-            path="/verify-email"
-            element={<div className="text-center">Verify Email Page</div>}
-          />
+          <Route path="/verify-email" element={<VerifyEmail />} />
         </Route>
       </Routes>
     </BrowserRouter>

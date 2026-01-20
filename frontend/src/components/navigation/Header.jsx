@@ -38,9 +38,26 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleVerifyEmail = () => {
-    setIsDropdownOpen(false);
-    navigate("/verify-email");
+  const handleVerifyEmail = async () => {
+    try {
+      const response = await axios.post(
+        `${backendUrl}/auth/send-verify-otp`,
+        {},
+        {
+          withCredentials: true,
+        },
+      );
+      if (response.data.success) {
+        setIsDropdownOpen(false);
+        navigate("/verify-email");
+        alert("Verification email sent! Please check your inbox.");
+      } else {
+        alert("Failed to send verification email. Please try again.");
+      }
+    } catch (error) {
+      alert("Failed to send verification email. Please try again.");
+      console.error("Verification email error:", error);
+    }
   };
 
   const handleLogout = async () => {
@@ -127,7 +144,7 @@ const Header = () => {
                   {/* Dropdown Menu */}
                   {isDropdownOpen && (
                     <div className="absolute top-12 right-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-2 z-50 animate-in fade-in duration-200">
-                      <div className="px-4 py-2 border-b border-gray-200 text-sm text-gray-600">
+                      <div className="px-4 py-2 border-b border-gray-200 text-sm text-gray-600 wrap-break-word">
                         {userData?.email}
                       </div>
                       {!userData?.isAccountVerified && (
