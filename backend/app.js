@@ -7,9 +7,8 @@ import userRouter from "./src/routes/user.routers.js";
 const app = express();
 
 const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5173",
-  process.env.FRONTEND_URL || "http://localhost:3000",
+  "https://auth-system-frontend-five.vercel.app",
+  process.env.FRONTEND_URL || "http://localhost:5173",
 ].filter(Boolean);
 
 app.use(
