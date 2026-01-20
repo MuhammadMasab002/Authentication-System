@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useContext, useState, useRef, useEffect } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import MenuIcon from "@mui/icons-material/Menu";
+import { AppContext } from "../../services/contextApi/AppContext";
+import axios from "axios";
 
 // import Sidebar from "../layout/Sidebar";
 
@@ -16,6 +18,51 @@ const NAV_ITEMS = [
 
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const navigate = useNavigate();
+
+  const { userData, backendUrl, setIsLoggedIn, setUserData } =
+    useContext(AppContext);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleVerifyEmail = () => {
+    setIsDropdownOpen(false);
+    navigate("/verify-email");
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(
+        `${backendUrl}/auth/logout`,
+        {},
+        {
+          withCredentials: true,
+        },
+      );
+      if (response.data.success) {
+        setIsLoggedIn(false);
+        setUserData(null);
+        navigate("/signin");
+        alert("Logged out successfully!");
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      alert("Logout failed. Please try again.");
+    }
+  };
 
   return (
     <>
@@ -63,15 +110,54 @@ const Header = () => {
             </nav>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-4">
-              {/* Profile */}
-              <Link
-                to="/my-profile"
-                className="p-2 rounded-full bg-gray-100 hover:bg-yellow-500/10"
+            {userData ? (
+              <div className="flex items-center gap-4">
+                {/* Profile Dropdown */}
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-100 hover:bg-yellow-500/20 transition cursor-pointer"
+                    title="Profile Menu"
+                  >
+                    <div className="text-lg font-semibold text-yellow-500">
+                      {userData?.username[0].toUpperCase()}
+                    </div>
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {isDropdownOpen && (
+                    <div className="absolute top-12 right-0 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-2 z-50 animate-in fade-in duration-200">
+                      <div className="px-4 py-2 border-b border-gray-200 text-sm text-gray-600">
+                        {userData?.email}
+                      </div>
+                      {!userData?.isAccountVerified && (
+                        <button
+                          onClick={handleVerifyEmail}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-100 transition text-sm text-gray-700 font-medium"
+                        >
+                          Verify Email
+                        </button>
+                      )}
+
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2 hover:bg-red-50 transition text-sm text-red-600 font-medium"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <NavLink
+                to={"/signin"}
+                end
+                className="text-sm font-medium transition text-gray-700 hover:text-yellow-500"
               >
-                <PersonOutlineIcon />
-              </Link>
-            </div>
+                Sign In
+              </NavLink>
+            )}
           </div>
         </div>
       </header>

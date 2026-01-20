@@ -9,6 +9,7 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: getBaseUrl(),
+    // credentials: "include",
   }),
   tagTypes: ["USER"],
   endpoints: (builder) => ({

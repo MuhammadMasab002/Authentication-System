@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import CustomFormInput, {
   INPUT_TYPES,
 } from "../components/common/inputs/CustomFormInput";
@@ -6,8 +6,15 @@ import CustomButton, {
   BUTTON_SIZES,
   BUTTON_VARIANTS,
 } from "../components/common/buttons/CustomButton";
+import { useNavigate } from "react-router-dom";
+import { AppContext } from "../services/contextApi/AppContext";
+import axios from "axios";
 
 const SignIn = () => {
+  const navigate = useNavigate();
+
+  const { backendUrl, setIsLoggedIn, getUserData } = useContext(AppContext);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -49,7 +56,7 @@ const SignIn = () => {
 
     // password validation
     if (!password) {
-      newErrors.password = "password is required";
+      newErrors.password = "Password is required";
     } else if (password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
     }
@@ -66,8 +73,18 @@ const SignIn = () => {
       return;
     }
     // Submit form data
-    console.log("Form submitted:", formData);
-
+    const response = await axios.post(`${backendUrl}/auth/login`, formData, {
+      withCredentials: true,
+    });
+    if (response.data.success) {
+      setIsLoggedIn(true);
+      getUserData();
+      navigate("/"); // Redirect to Home on successful login
+      console.log("Form submitted:", formData);
+      alert("Login Successful");
+    } else {
+      alert("Login Failed: " + response.data.message);
+    }
     // Reset form
     setFormData({
       email: "",
@@ -108,7 +125,7 @@ const SignIn = () => {
               />
 
               <CustomFormInput
-                placeholder="password"
+                placeholder="Password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
@@ -135,7 +152,7 @@ const SignIn = () => {
                   variant={BUTTON_VARIANTS.TEXT_SECONDARY}
                   className="px-0! py-0! max-w-14 cursor-pointer"
                   onClick={
-                    () => (window.location.href = "/signup") // Redirect to signup page
+                    () => navigate("/signup") // Redirect to signup page
                   }
                 />
               </div>

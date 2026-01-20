@@ -24,6 +24,10 @@ function App() {
             path="/contact"
             element={<div className="text-center">Contact Page</div>}
           />
+          <Route
+            path="/verify-email"
+            element={<div className="text-center">Verify Email Page</div>}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

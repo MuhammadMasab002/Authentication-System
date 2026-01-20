@@ -1,18 +1,27 @@
-import React, { useState } from "react";
-import CustomFormInput, { INPUT_TYPES } from "../components/common/inputs/CustomFormInput";
+import React, { useContext, useState } from "react";
+import CustomFormInput, {
+  INPUT_TYPES,
+} from "../components/common/inputs/CustomFormInput";
 import CustomButton, {
   BUTTON_SIZES,
   BUTTON_VARIANTS,
 } from "../components/common/buttons/CustomButton";
+import { useNavigate } from "react-router-dom";
+import { AppContext } from "../services/contextApi/AppContext";
+import axios from "axios";
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
+  const { backendUrl, setIsLoggedIn } = useContext(AppContext);
+
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
   });
@@ -33,14 +42,14 @@ const SignUp = () => {
   };
 
   const validate = () => {
-    const { name, email, password } = formData;
+    const { username, email, password } = formData;
     const newErrors = {};
 
-    // Name validation
-    if (!name.trim()) {
-      newErrors.name = "Name is required";
-    } else if (name.length < 3) {
-      newErrors.name = "Name must be at least 3 characters";
+    // Username validation
+    if (!username.trim()) {
+      newErrors.username = "User Name is required";
+    } else if (username.length < 3) {
+      newErrors.username = "User Name must be at least 3 characters";
     }
 
     // Email validation
@@ -56,7 +65,7 @@ const SignUp = () => {
 
     // password validation
     if (!password) {
-      newErrors.password = "password is required";
+      newErrors.password = "Password is required";
     } else if (password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
     }
@@ -73,16 +82,28 @@ const SignUp = () => {
       return;
     }
     // Submit form data
-    console.log("Form submitted:", formData);
+    // Axios.default.withCredentials = true;
+    const response = await axios.post(`${backendUrl}/auth/register`, formData, {
+      withCredentials: true,
+    });
+    console.log("signup response", response);
+    if (response.data.success) {
+      setIsLoggedIn(true);
+      navigate("/signin");
+      console.log("Form submitted:", formData);
 
+      alert("Signup successful! Please sign in.");
+    } else {
+      alert("Signup Failed: " + response.data.message);
+    }
     // Reset form
     setFormData({
-      name: "",
+      username: "",
       email: "",
       password: "",
     });
     setErrors({
-      name: "",
+      username: "",
       email: "",
       password: "",
     });
@@ -94,7 +115,7 @@ const SignUp = () => {
         <div className="flex items-center justify-center py-10 px-6">
           <div className="w-full max-w-md">
             <h2 className="text-4xl font-bold text-left text-yellow-500 mb-8">
-              Create an User
+              Create Account
             </h2>
             <p className="text-left text-black mb-6">
               Enter your details below
@@ -106,14 +127,14 @@ const SignUp = () => {
               className="flex flex-col gap-5 text-black"
             >
               <CustomFormInput
-                placeholder="Name"
-                name="name"
-                value={formData.name}
+                placeholder="User Name"
+                name="username"
+                value={formData.username}
                 onChange={handleChange}
                 required
                 type={INPUT_TYPES.TEXT}
-                variant={errors.name ? "error" : "default"}
-                errorMessage={errors.name}
+                variant={errors.username ? "error" : "default"}
+                errorMessage={errors.username}
               />
 
               <CustomFormInput
@@ -128,7 +149,7 @@ const SignUp = () => {
               />
 
               <CustomFormInput
-                placeholder="password"
+                placeholder="Password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
@@ -155,7 +176,7 @@ const SignUp = () => {
                   variant={BUTTON_VARIANTS.TEXT_SECONDARY}
                   className="px-0! py-0! max-w-14 cursor-pointer"
                   onClick={
-                    () => (window.location.href = "/signin") // Redirect to login page
+                    () => navigate("/signin") // Redirect to signin page
                   }
                 />
               </div>
