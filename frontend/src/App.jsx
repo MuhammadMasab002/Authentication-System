@@ -4,6 +4,7 @@ import MainLayout from "./layouts/MainLayout";
 import SignIn from "./pages/Signin";
 import SignUp from "./pages/Signup";
 import VerifyEmail from "./pages/VerifyEmail";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 
 function App() {
   return (
@@ -15,7 +16,11 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route
             path="/my-profile"
-            element={<div className="text-center">Profile Page</div>}
+            element={
+              <ProtectedRoute>
+                <div className="text-center">Profile Page</div>
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/about"
@@ -25,7 +30,19 @@ function App() {
             path="/contact"
             element={<div className="text-center">Contact Page</div>}
           />
-          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route
+            path="/verify-email"
+            element={
+              <ProtectedRoute>
+                <VerifyEmail />
+              </ProtectedRoute>
+            }
+          />
+          {/* if no route match */}
+          <Route
+            path="*"
+            element={<div className="text-center">404 - Page Not Found</div>}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CustomFormInput, {
   INPUT_TYPES,
 } from "../components/common/inputs/CustomFormInput";
@@ -13,7 +13,8 @@ import axios from "axios";
 const SignUp = () => {
   const navigate = useNavigate();
 
-  const { backendUrl, setIsLoggedIn } = useContext(AppContext);
+  const { backendUrl, setIsLoggedIn, isLoggedIn, userData } =
+    useContext(AppContext);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -108,6 +109,11 @@ const SignUp = () => {
       password: "",
     });
   };
+
+  // redirect to home if already logged in
+  useEffect(() => {
+    isLoggedIn && userData && userData?.isAccountVerified && navigate("/");
+  }, [isLoggedIn, userData, navigate]);
 
   return (
     <div className="w-full min-h-[80vh] flex flex-col justify-center items-center gap-4 bg-gray-50">

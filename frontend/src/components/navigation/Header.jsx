@@ -1,6 +1,5 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import MenuIcon from "@mui/icons-material/Menu";
 import { AppContext } from "../../services/contextApi/AppContext";
 import axios from "axios";
@@ -8,6 +7,10 @@ import axios from "axios";
 // import Sidebar from "../layout/Sidebar";
 
 import Sidebar from "./Sidebar";
+import CustomButton, {
+  BUTTON_SIZES,
+  BUTTON_VARIANTS,
+} from "../common/buttons/CustomButton";
 
 const NAV_ITEMS = [
   { label: "Home", path: "/" },
@@ -107,23 +110,26 @@ const Header = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8">
-              {NAV_ITEMS.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  end
-                  className={({ isActive }) =>
-                    `text-sm font-medium transition
+              {NAV_ITEMS.map(
+                (item) =>
+                  (!userData || item.label !== "Sign Up") && (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      end
+                      className={({ isActive }) =>
+                        `text-sm font-medium transition
                     ${
                       isActive
                         ? "text-yellow-500"
                         : "text-gray-700 hover:text-yellow-500"
                     }`
-                  }
-                >
-                  {item.label}
-                </NavLink>
-              ))}
+                      }
+                    >
+                      {item.label}
+                    </NavLink>
+                  ),
+              )}
             </nav>
 
             {/* Right Actions */}
@@ -172,7 +178,13 @@ const Header = () => {
                 end
                 className="text-sm font-medium transition text-gray-700 hover:text-yellow-500"
               >
-                Sign In
+                <CustomButton
+                  text={"Sign In"}
+                  type="button"
+                  className="cursor-pointer rounded-full px-5"
+                  variant={BUTTON_VARIANTS.OUTLINE}
+                  size={BUTTON_SIZES.SM}
+                />
               </NavLink>
             )}
           </div>

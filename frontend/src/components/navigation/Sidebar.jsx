@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import CloseIcon from "@mui/icons-material/Close";
+import { AppContext } from "../../services/contextApi/AppContext";
 
 const NAV_ITEMS = [
   { label: "Home", path: "/" },
@@ -10,6 +11,8 @@ const NAV_ITEMS = [
 ];
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const { userData } = useContext(AppContext);
+
   return (
     <>
       {/* Overlay */}
@@ -40,23 +43,26 @@ const Sidebar = ({ isOpen, onClose }) => {
 
         {/* Navigation */}
         <nav className="flex flex-col p-4 gap-2">
-          {NAV_ITEMS?.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              onClick={onClose}
-              className={({ isActive }) =>
-                `px-4 py-3 rounded-lg text-sm font-medium transition
+          {NAV_ITEMS?.map(
+            (item) =>
+              (!userData || item.label !== "Sign Up") && (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  onClick={onClose}
+                  className={({ isActive }) =>
+                    `px-4 py-3 rounded-lg text-sm font-medium transition
                 ${
                   isActive
                     ? "bg-yellow-500/10 text-yellow-500"
                     : "text-gray-700 hover:bg-gray-100"
                 }`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ),
+          )}
         </nav>
       </aside>
     </>
